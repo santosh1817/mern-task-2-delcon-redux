@@ -3,6 +3,7 @@ import {BrowserRouter,Link,Route,Switch} from 'react-router-dom';
 import Register from './Components/User/Register';
 import Login from './Components/User/Login';
 import axios from 'axios';
+import {connect} from 'react-redux';
 import './app.css';
 import CreateReservation from './Components/Reservation/CreateReservation'
 import ListReservation from './Components/Reservation/ListReservation'
@@ -70,14 +71,8 @@ class App extends React.Component{
           <Route path="/users/login" render={(props) => {
               return <Login {...props} handleAuthentication={this.handleAuthentication} />
           }} />
-
-          
-
-
-
-
-          <Route path="http://localhost:3005/users/logout" render={(props) => {
-              axios.delete('/users/logout', {
+          <Route path="/users/logout" render={(props) => {
+              axios.delete('http://localhost:3005/users/logout', {
                 headers: {
                   'x-auth': localStorage.getItem('token')
                 }
@@ -97,5 +92,10 @@ class App extends React.Component{
     )
   }
 }
+const mapStateToProps=(state)=>{
+  return{
+      user:state.user
+  } 
+}
 
-export default App;
+export default connect(mapStateToProps)(App);

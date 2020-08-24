@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Col, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './reservation.css';
+import { connect } from 'react-redux';
 
 class CreateReservation extends Component {
 
@@ -284,4 +285,10 @@ class CreateReservation extends Component {
         )
     }
 }
-export default CreateReservation
+const mapStateToProps = state => {
+    return {
+      user: state.user,
+      reservations:state.reservations
+    };
+  };
+export default connect(mapStateToProps)(CreateReservation)

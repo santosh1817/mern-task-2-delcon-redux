@@ -3,6 +3,8 @@ import axios from 'axios';
 import './reservation.css';
 import moment from 'moment'
 import { Table } from 'reactstrap';
+import { connect } from "react-redux";
+
 
 class ListReservation extends Component {
     constructor(props){
@@ -148,5 +150,11 @@ class ListReservation extends Component {
         )
     }
 }
+const mapStateToProps=state=>{
+  return{
+    user:state.user,
+    reservations:state.reservations
+  }
+}
 
-export default ListReservation
+export default  connect(mapStateToProps)(ListReservation)
