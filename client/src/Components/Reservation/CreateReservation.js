@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState,useEffect } from 'react'
 import axios from 'axios' 
 import { ToastContainer, toast } from "react-toastify";  
 import "react-toastify/dist/ReactToastify.css";
@@ -7,39 +7,73 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './reservation.css';
 import { connect } from 'react-redux';
 
-class CreateReservation extends Component {
+const CreateReservation =()=> {
 
-    constructor(){
-        super()
-        this.state={
-            service:'',
-            servicesArray:['Hair Cut','Face Wash','Face-De-Tan','Make-Up'],
-            date:'',
-            timeSlot:'',
-            message:'',
-            mobile:'',
-            username:'',
-            slotArrayInitial:['10-11','11-12','12-1','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
-            slotArray1:[],
-            loggedInUserId:'',
-            error:false,
-            notice:''      
-        }
+    // constructor(){
+    //     super()
+    //     this.state={
+    //         service:'',
+    //         servicesArray:['Hair Cut','Face Wash','Face-De-Tan','Make-Up'],
+    //         date:'',
+    //         timeSlot:'',
+    //         message:'',
+    //         mobile:'',
+    //         username:'',
+    //         slotArrayInitial:['10-11','11-12','12-1','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
+    //         slotArray1:[],
+    //         loggedInUserId:'',
+    //         error:false,
+    //         notice:''      
+    //     }
         
-    }
-    errMessage=()=>{
+    // }
+
+    const [service,useservice]=useState('')
+    const [servicesArray,useservicesArray]=useState(['Hair Cut','Face Wash','Face-De-Tan','Make-Up'])
+    const [date,usedate]=useState('')
+    const [timeSlot,usetimeSlot]=useState('')
+    const [message,usemessage]=useState('')
+    const [mobile,usemobile]=useState('')
+    const [username,useusername]=useState('')
+    const [slotArrayInitial,useslotArrayInitial]=useState(['10-11','11-12','12-1','2-3','3-4','4-5','5-6','6-7','7-8','8-9'])
+    const [slotArray1,useslotArray1]=useState([])
+    const [loggedInUserId,useloggedInUserId]=useState('')
+    const [error,useerror]=useState(false)
+    const [notice,usenotice]=useState('')
+
+
+    const errMessage=()=>{
         if(
-            this.state.service ==="" &&  
-            this.state.mobile === "" &&
-            this.state.date===""&&
-            this.state.timeSlot===""&&
-            this.state.mobile.length===10
+            service ==="" &&  
+            mobile === "" &&
+            date===""&&
+            timeSlot===""&&
+            mobile.length===10
         ){
-            this.setState({error:true})
+            //this.setState({error:true})
+            useerror(true)
 
         }
     }
-    componentDidMount(){
+    // componentDidMount(){
+        // axios.get('http://localhost:3005/users/loggedinuser',{
+        //     headers:{
+        //         'x-auth':localStorage.getItem('token')
+        //     }
+        // })
+
+        // .then((response)=>{
+        //     this.setState(()=>({
+        //         loggedInUserId:response.data._id
+        //     }))
+        // })
+
+
+        // .catch(err=>console.log(err))
+    // }
+
+    useEffect(()=>{
+
         axios.get('http://localhost:3005/users/loggedinuser',{
             headers:{
                 'x-auth':localStorage.getItem('token')
@@ -47,53 +81,77 @@ class CreateReservation extends Component {
         })
 
         .then((response)=>{
-            this.setState(()=>({
-                loggedInUserId:response.data._id
-            }))
+            // this.setState(()=>({
+            //     loggedInUserId:response.data._id
+            // }))
+            useloggedInUserId(response.data._id)
         })
 
 
         .catch(err=>console.log(err))
-    }
+        
+    },[])
+
   
-    handleChange=(e)=>{
-        e.persist()
-        this.setState(()=>({
-            [e.target.name]:e.target.value
-        }))
-    }
+    // const handleChange=(e)=>{
+    //     e.persist()
+    //     // this.setState(()=>({
+    //     //     [e.target.name]:e.target.value
+    //     // }))
 
 
-    handleDateChange=(e)=>{
+
+    // }
+
+
+    const handleDateChange=(e)=>{
         e.persist()
         const date=e.target.value
-        this.setState({date},function(){
-            const formData={
-                date:this.state.date
-            }
+        // this.setState({date},function(){
+        //     const formData={
+        //         date:this.state.date
+        //     }
                
-            axios.post(`http://localhost:3005/reservation/find-slots`,formData,{
+            
+        
+           
+        
+        const formData={
+            date:e.target.value
+        }
+
+        axios.post(`http://localhost:3005/reservation/find-slots`,formData,{
                 headers:{
                     'x-auth':localStorage.getItem('token')
                 }
-            })
-            .then(response=>{
-                this.setState(()=>({
-                    //slotsOnDate:response.data,
-                    slotArray1:this.state.slotArrayInitial.filter(function(item){
-                        return response.data.indexOf(item)===-1
-                    })
-                    
-                }))
+        })
+        .then(response=>{
+            // this.setState(()=>({
+            //    slotsOnDate:response.data,
+            //     slotArray1:slotArrayInitial.filter(function(item){
+            //         return response.data.indexOf(item)===-1
+            //     })
                 
-        
+            // }))
+            console.log(response)
+
+            useslotArray1({
+                slotArray1:slotArrayInitial.filter(function(item){
+                    return response.data.indexOf(item)===-1
+                })
             })
-        }
-        )        
+            
+    
+        })
+
 
     }
+        
+        
 
-    handleSubmit=(e)=>{
+    
+
+    const handleSubmit=(e)=>{
         e.preventDefault()
         
         if(this.state.mobile.length!==10){
@@ -149,7 +207,7 @@ class CreateReservation extends Component {
         })
 
     }
-    notify = () => {
+    const notify = () => {
         toast.success("Request Sent Successfully", {
             position: "top-right",
             autoClose: 4000,
@@ -163,8 +221,6 @@ class CreateReservation extends Component {
         
       };
 
-    render() {
-       
         
         return (
             
@@ -172,8 +228,8 @@ class CreateReservation extends Component {
                 <h1 className="pt-3">Reservation form</h1>
                 <ToastContainer />
                 <div className="col-md-8">
-                {this.state.error?(<div style={{color:'red' ,textAlign:'center'}}>All fields are required</div>):null}<br/>
-                    <Form onSubmit={this.handleSubmit}>
+                {error?(<div style={{color:'red' ,textAlign:'center'}}>All fields are required</div>):null}<br/>
+                    <Form onSubmit={handleSubmit}>
                         <div>
 
                             <div>
@@ -184,25 +240,32 @@ class CreateReservation extends Component {
                                     <Col sm={10}>
                                         <Input type="text"
                                             name="mobile"
-                                            value={this.state.mobile}
-                                            onChange={this.handleChange}
+                                            value={mobile}
+                                            //onChange={this.handleChange}
+                                            onChange={(e)=>{
+                                                e.persist()
+                                                usemobile(e.target.value)
+                                            }}
                                             className="form-control"
                                             placeholder="10 digit number"
                                         ></Input>
                                     </Col>
                                 </FormGroup>
                             </div>
-                        {this.state.notice && <p style={{color:'red' ,textAlign:'center'}}> {this.state.notice} </p>}
+                        {notice && <p style={{color:'red' ,textAlign:'center'}}> {notice} </p>}
                             <div>
                                 <FormGroup row>
                                     <Label sm={2} className="headercolor">
                                         Service :
                                     </Label>
                                     <Col sm={10}>
-                                        <Input  type="select" value={this.state.service} name="service" onChange={this.handleChange}>
+                                        <Input  type="select" value={service} name="service" onChange={
+
+                                            (e)=>{useservice(e.target.value)}
+                                            }>
                                             <option value="">select</option>
                                             {
-                                                this.state.servicesArray.map((item)=>{
+                                                servicesArray.map((item)=>{
                                                     return <option key={item} value={item}>{item}</option>
                                                 })
                                             }
@@ -218,9 +281,14 @@ class CreateReservation extends Component {
                                     <Col sm={5}>
                                     <Input type="date"
                                         name="date"
-                                        value={this.state.date}
+                                        value={date}
                                         
-                                        onChange={this.handleDateChange}
+                                        onChange={
+                                            handleDateChange
+                                            // (e)=>{
+                                            //     usedate(e.target.value)
+                                            // }
+                                        }
                                         className="form-control"
                                         placeholder="person email"
                                     > 
@@ -235,10 +303,15 @@ class CreateReservation extends Component {
                                     Available Time Slots :
                                 </Label>
                                 <Col sm={10}>
-                                    <Input type="select" value={this.state.timeSlot} name="timeSlot" onChange={this.handleChange}>
+                                    <Input type="select" value={timeSlot} name="timeSlot" onChange={
+                                        (e)=>{
+                                            e.persist()
+                                            usetimeSlot(e.target.value)
+                                        }
+                                    }>
                                         <option value="">select</option>
                                         {
-                                            this.state.slotArray1.map((slot)=>{
+                                            slotArray1.map((slot)=>{
                                                 return <option key={slot} value={slot}>{slot}</option>
                                             })
                                         }
@@ -255,8 +328,13 @@ class CreateReservation extends Component {
                                     <Col sm={5}>
                                         <Input
                                         type="textarea"
-                                        value={this.state.message}
-                                        onChange={this.handleChange}
+                                        value={message}
+                                        onChange={
+                                            (e)=>{
+                                                e.persist()
+                                                usemessage(e.target.value)
+                                            }
+                                        }
                                         name="message">
                                         </Input>
                                     </Col>
@@ -264,13 +342,13 @@ class CreateReservation extends Component {
                             </div>
 
                             <Button type="submit" color="primary" size="sm"  onClick={
-                                this.state.mobile!==""&&
-                                this.state.date!==""&&
-                                this.state.service!==""&&
-                                this.state.timeSlot!==""&&
-                                this.state.mobile.length===10
-                                ?this.notify
-                                :this.errMessage
+                                mobile!==""&&
+                                date!==""&&
+                                service!==""&&
+                                timeSlot!==""&&
+                                mobile.length===10
+                                ?notify
+                                :errMessage
 
                             }>
                             Submit
@@ -283,7 +361,7 @@ class CreateReservation extends Component {
                 
             </div>
         )
-    }
+    
 }
 const mapStateToProps = state => {
     return {
