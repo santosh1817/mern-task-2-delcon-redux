@@ -7,26 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './reservation.css';
 import { connect } from 'react-redux';
 
-const CreateReservation =()=> {
-
-    // constructor(){
-    //     super()
-    //     this.state={
-    //         service:'',
-    //         servicesArray:['Hair Cut','Face Wash','Face-De-Tan','Make-Up'],
-    //         date:'',
-    //         timeSlot:'',
-    //         message:'',
-    //         mobile:'',
-    //         username:'',
-    //         slotArrayInitial:['10-11','11-12','12-1','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
-    //         slotArray1:[],
-    //         loggedInUserId:'',
-    //         error:false,
-    //         notice:''      
-    //     }
-        
-    // }
+const CreateReservation =(props)=> {
 
     const [service,useservice]=useState('')
     const [servicesArray,useservicesArray]=useState(['Hair Cut','Face Wash','Face-De-Tan','Make-Up'])
@@ -50,28 +31,10 @@ const CreateReservation =()=> {
             timeSlot===""&&
             mobile.length===10
         ){
-            //this.setState({error:true})
             useerror(true)
-
         }
     }
-    // componentDidMount(){
-        // axios.get('http://localhost:3005/users/loggedinuser',{
-        //     headers:{
-        //         'x-auth':localStorage.getItem('token')
-        //     }
-        // })
-
-        // .then((response)=>{
-        //     this.setState(()=>({
-        //         loggedInUserId:response.data._id
-        //     }))
-        // })
-
-
-        // .catch(err=>console.log(err))
-    // }
-
+    
     useEffect(()=>{
 
         axios.get('http://localhost:3005/users/loggedinuser',{
@@ -79,72 +42,38 @@ const CreateReservation =()=> {
                 'x-auth':localStorage.getItem('token')
             }
         })
-
         .then((response)=>{
-            // this.setState(()=>({
-            //     loggedInUserId:response.data._id
-            // }))
+            
             useloggedInUserId(response.data._id)
         })
-
-
         .catch(err=>console.log(err))
         
     },[])
 
-  
-    // const handleChange=(e)=>{
-    //     e.persist()
-    //     // this.setState(()=>({
-    //     //     [e.target.name]:e.target.value
-    //     // }))
-
-
-
-    // }
-
-
     const handleDateChange=(e)=>{
         e.persist()
         const date=e.target.value
-        // this.setState({date},function(){
-        //     const formData={
-        //         date:this.state.date
-        //     }
+        usedate(e.target.value)
                
-            
-        
-           
-        
         const formData={
             date:e.target.value
         }
-
+        
         axios.post(`http://localhost:3005/reservation/find-slots`,formData,{
                 headers:{
                     'x-auth':localStorage.getItem('token')
                 }
         })
         .then(response=>{
-            // this.setState(()=>({
-            //    slotsOnDate:response.data,
-            //     slotArray1:slotArrayInitial.filter(function(item){
-            //         return response.data.indexOf(item)===-1
-            //     })
-                
-            // }))
-            console.log(response)
-
-            useslotArray1({
-                slotArray1:slotArrayInitial.filter(function(item){
+            
+            useslotArray1(
+                slotArrayInitial.filter(function(item){
                     return response.data.indexOf(item)===-1
                 })
-            })
+            )
             
     
         })
-
-
     }
         
         
@@ -154,24 +83,24 @@ const CreateReservation =()=> {
     const handleSubmit=(e)=>{
         e.preventDefault()
         
-        if(this.state.mobile.length!==10){
-            this.setState({
-                notice:'mobile number must be of 10 digits'
-            })
+        if(mobile.length!==10){
+            
+            usenotice('mobile number must be of 10 digits')
 
             setTimeout(()=>{
-                this.setState({notice:''})
+
+                usenotice('')
 
             },2000)
             return
         }
         const formData={
-            date:this.state.date,
-            service:this.state.service,
-            timeSlot:this.state.timeSlot,
-            message:this.state.message,
-            username:this.state.loggedInUserId,
-            mobile:this.state.mobile
+            date:date,
+            service:service,
+            timeSlot:timeSlot,
+            message:message,
+            username:loggedInUserId,
+            mobile:mobile
 
         }
 
@@ -185,20 +114,25 @@ const CreateReservation =()=> {
             
             if(response.data.error){
               
-                this.setState(()=>({
-                    date:'',timeSlot:'',message:'',mobile:'',username:'',service:''
-                }))
+                usedate('')
+                usetimeSlot('')
+                usemessage('')
+                usemobile('')
+                useusername('')
+                useservice('')
 
 
             }else{
                 
-                
-                this.setState(()=>({
-                    date:'',timeSlot:'',message:'',mobile:'',username:'',service:''
-                }))
-                this.props.history.push('/reservation/view')
+                usedate('')
+                usetimeSlot('')
+                usemessage('')
+                usemobile('')
+                useusername('')
+                useservice('')
 
-                
+                props.history.push('/reservation/view')
+
             }
  
         })
@@ -217,7 +151,8 @@ const CreateReservation =()=> {
             draggable: true,
             progress: undefined
         });
-        this.setState({error:false})
+        
+        useerror(false)
         
       };
 
@@ -241,7 +176,6 @@ const CreateReservation =()=> {
                                         <Input type="text"
                                             name="mobile"
                                             value={mobile}
-                                            //onChange={this.handleChange}
                                             onChange={(e)=>{
                                                 e.persist()
                                                 usemobile(e.target.value)
@@ -285,9 +219,7 @@ const CreateReservation =()=> {
                                         
                                         onChange={
                                             handleDateChange
-                                            // (e)=>{
-                                            //     usedate(e.target.value)
-                                            // }
+                                            
                                         }
                                         className="form-control"
                                         placeholder="person email"
